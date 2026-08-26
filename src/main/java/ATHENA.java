@@ -1,6 +1,4 @@
 import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ATHENA {
     public static void horizontal_lines(){
@@ -25,32 +23,54 @@ public class ATHENA {
         System.out.println("Bye. Hope to see you again soon!");
         horizontal_lines();
     }
+    public static void mark(String line, Task[] tasks_list){
+        String[] words = line.split(" ");
+        int taskNumber = Integer.parseInt(words[1]);
+        Task t = tasks_list[taskNumber - 1];
+        t.setDone(true);
+        System.out.println(" Nice! I've marked this task as done:");
+        System.out.println("   " + t.getStatus());
+    }
+    public static void unmark(String line, Task[] tasks_list){
+        String[] words = line.split(" ");
+        int taskNumber = Integer.parseInt(words[1]);
+        Task t = tasks_list[taskNumber - 1];
+        t.setDone(false);
+        System.out.println(" OK, I've marked this task as not done yet:");
+        System.out.println("   " + t.getStatus());
+    }
 
     public static void main(String[] args) {
-        String[] store_list = new String[100];
-        int numberofentries =0;
+        Task[] tasks_list = new Task[100];
+        int numberoftasks =0;
         Greet();
         Scanner in = new Scanner(System.in);
         while (in.hasNextLine()) {
-            String command = in.nextLine();
+            String line = in.nextLine();
 
-            if (command.equals("bye")) {
+            if (line.equals("bye")) {
                 Exit();
                 break;
             }
 
             horizontal_lines();
-            switch (command) {
-                case "list":
-                    for (int i = 0; i < numberofentries; i++) {
-                        System.out.println((i + 1) + ". " + store_list[i]);
-                    }
-                    break;
-                default:
-                    store_list[numberofentries] = command;
-                    numberofentries++;
-                    System.out.println("added: " + command);
-                    break;
+            if (line.equals("list")) {
+                System.out.println(" Here are the tasks in your list:");
+                for (int i = 0; i < numberoftasks; i++) {
+                    System.out.println(" " + (i + 1) + "." + tasks_list[i].getStatus());
+                }
+            }
+            else if(line.startsWith("mark")) {
+                mark(line,tasks_list);
+            }
+            else if(line.startsWith("unmark")) {
+                unmark(line,tasks_list);
+            }
+            else{
+                tasks_list[numberoftasks] = new Task();
+                tasks_list[numberoftasks].setDescription(line);
+                numberoftasks++;
+                System.out.println("added: " + line);
             }
             horizontal_lines();
         }
