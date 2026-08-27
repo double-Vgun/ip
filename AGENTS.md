@@ -14,6 +14,8 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 # Guidance for interacting with users
 
+* All Java code in this project MUST follow the `seedu-java-coding-standard` skill, based on the SE-EDU Java coding standard (basic + intermediate rules). Read and apply that skill before creating, editing, or reviewing Java code.
+
 * Explain the rationale for significant actions: what you did and why.
 * Keep explanations brief but instructive, supporting learning through responsible use of AI. For example:
 
@@ -30,6 +32,7 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 
 ## Git
 
+* All future commits in this project MUST follow the `seedu-git-standard` skill, based on the SE-EDU Git conventions. Read and apply that skill before creating or proposing a commit.
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
