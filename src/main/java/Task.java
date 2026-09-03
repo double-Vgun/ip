@@ -1,9 +1,13 @@
-package athena;
-
 /** Represents a task with a description and completion state. */
 public class Task {
     private String description = "";
     private boolean isDone = false;
+    private Tasktype type = Tasktype.DEFAULT;
+
+    public Task(String description, Tasktype type){
+        setDescription(description);
+        this.type =type;
+    }
     /** Sets whether this task is complete. */
     public void setDone(boolean isDone) {
         this.isDone = isDone;
@@ -20,8 +24,10 @@ public class Task {
     public boolean isDone() {
         return isDone;
     }
-    /** Returns this task formatted with its completion status. */
-    public String getStatus() {
+
+
+    @Override
+    public String toString() {
         if (isDone) {
             return "[X] " + getDescription();
         } else {

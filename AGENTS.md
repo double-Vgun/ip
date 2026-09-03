@@ -14,6 +14,10 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 # Guidance for interacting with users
 
+## Post-code-update verification
+
+After every code update in this repository, review `test/ui-test-plan.md` and update it when the change affects the application's behavior, commands, inputs, or console output. Then invoke the project-specific `test-ui` skill to run the UI test plan. This applies even when no plan update is needed. If the skill reports a failure, stop and report the failure with the actual and expected output before making further code changes.
+
 * All Java code in this project MUST follow the `seedu-java-coding-standard` skill, based on the SE-EDU Java coding standard (basic + intermediate rules). Read and apply that skill before creating, editing, or reviewing Java code.
 
 * Explain the rationale for significant actions: what you did and why.
