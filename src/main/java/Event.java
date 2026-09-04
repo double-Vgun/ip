@@ -1,9 +1,11 @@
-public class Event extends Task{
-    protected String by;
-    protected String from;
+/** Represents a task scheduled between a start and end time. */
+public class Event extends Task {
+    private final String by;
+    private final String from;
 
+    /** Creates an event task with its description and time range. */
     public Event(String description, String from, String by) {
-        super(description, Tasktype.EVENT);
+        super(description, TaskType.EVENT);
         this.by = by;
         this.from = from;
     }

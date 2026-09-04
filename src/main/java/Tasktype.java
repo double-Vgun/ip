@@ -1,3 +1,4 @@
-public enum Tasktype {
-    DEADLINE,EVENT, TODO,DEFAULT
+/** Defines the categories of tasks supported by the task manager. */
+public enum TaskType {
+    DEADLINE, EVENT, TODO, DEFAULT
 }

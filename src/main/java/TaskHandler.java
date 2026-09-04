@@ -47,7 +47,7 @@ public class TaskHandler {
         addTask(new Event(fromParts[0], toParts[0], toParts[1]));
     }
     public static void addDefault(String line){
-        addTask(new Task(line,Tasktype.DEFAULT));
+        addTask(new Task(line, TaskType.DEFAULT));
     }
 
     private static Task getTask(String line) {
