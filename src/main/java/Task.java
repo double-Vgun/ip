@@ -2,7 +2,7 @@
 public class Task {
     private String description = "";
     private boolean isDone = false;
-    private TaskType type = TaskType.DEFAULT;
+    private final TaskType type;
 
     /** Creates a task with the given description and category. */
     public Task(String description, TaskType type) {

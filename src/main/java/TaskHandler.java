@@ -46,7 +46,8 @@ public class TaskHandler {
         String[] toParts = fromParts[1].split(" /to ", 2);
         addTask(new Event(fromParts[0], toParts[0], toParts[1]));
     }
-    public static void addDefault(String line){
+    /** Adds a task using the default task category. */
+    public static void addDefault(String line) {
         addTask(new Task(line, TaskType.DEFAULT));
     }
 
@@ -63,33 +64,32 @@ public class TaskHandler {
         System.out.println(" Now you have " + numberOfTasks + " tasks in the list.");
     }
 
+    /** Handles one user command and updates the task list as needed. */
     public TaskHandler(String line) {
         String trimmedLine = line.trim();
         String command = trimmedLine.split(" ", 2)[0];
         switch (command) {
-        case "list":
-            list();
-            break;
-        case "mark":
-            mark(trimmedLine);
-            break;
-        case "unmark":
-            unmark(trimmedLine);
-            break;
-        case "todo":
-            addTodo(trimmedLine.substring("todo ".length()));
-            break;
-        case "deadline":
-            addDeadline(trimmedLine);
-            break;
-        case "event":
-            addEvent(trimmedLine);
-            break;
-        default:
-            addDefault(trimmedLine);
-            break;
+            case "list":
+                list();
+                break;
+            case "mark":
+                mark(trimmedLine);
+                break;
+            case "unmark":
+                unmark(trimmedLine);
+                break;
+            case "todo":
+                addTodo(trimmedLine.substring("todo ".length()));
+                break;
+            case "deadline":
+                addDeadline(trimmedLine);
+                break;
+            case "event":
+                addEvent(trimmedLine);
+                break;
+            default:
+                addDefault(trimmedLine);
+                break;
         }
     }
-
-
 }

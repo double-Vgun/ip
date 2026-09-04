@@ -6,6 +6,7 @@ public class ATHENA {
     public static void printHorizontalLines() {
         System.out.println("____________________________________________________________");
     }
+
     /** Displays the greeting banner and instructions. */
     public static void greet() {
         printHorizontalLines();
@@ -19,7 +20,6 @@ public class ATHENA {
         System.out.println("Hello! I'm ATHENA.");
         System.out.println("What can I do for you?");
         printHorizontalLines();
-
     }
     /** Displays the farewell message. */
     public static void exit() {
@@ -33,10 +33,11 @@ public class ATHENA {
 
         greet();
         Scanner input = new Scanner(System.in);
+
         while (input.hasNextLine()) {
             String line = input.nextLine();
 
-            if ((line.trim()).equals("bye")) {
+            if (line.trim().equals("bye")) {
                 exit();
                 break;
             }
