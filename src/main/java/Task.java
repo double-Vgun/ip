@@ -6,7 +6,7 @@ public class Task {
 
     /** Creates a task with the given description and category. */
     public Task(String description, TaskType type) {
-        setDescription(description);
+        this.description = description;
         this.type = type;
     }
     /** Sets whether this task is complete. */
