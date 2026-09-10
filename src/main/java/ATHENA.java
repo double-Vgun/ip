@@ -42,7 +42,11 @@ public class ATHENA {
                 break;
             }
             printHorizontalLines();
-            new TaskHandler(line);
+            try {
+                new TaskHandler(line);
+            } catch (AthenaException exception) {
+                System.out.println(exception.getMessage());
+            }
             printHorizontalLines();
         }
         input.close();
