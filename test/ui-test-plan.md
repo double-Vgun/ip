@@ -4,27 +4,28 @@ This file is the executable specification for the `test-ui` project skill.
 
 ## Test execution information
 
-- **Start command:** <!-- e.g. `java -jar build/libs/app.jar` -->
+- **Start command:** `java -cp out ATHENA`
 - **Working directory:** <!-- repository root unless another directory is required -->
 - **Java version:** Java 25, when applicable
 - **Comparison rules:** Exact match, including line breaks and prompts, unless a test case says otherwise.
 
 ## Test cases
 
-<!-- Copy this block for each case and replace every placeholder. -->
+### Test case 1: Reject unsupported task category
 
-### Test case 1: <!-- short name -->
-
-- **Aim:** <!-- behavior being verified -->
+- **Aim:** Verify that an unsupported command does not create a default task.
 - **Inputs:**
 
   ```text
-  <!-- one input line per line, in the order entered -->
+  meeting tomorrow
+  list
+  bye
   ```
 
 - **Expected output:**
 
   ```text
-  <!-- exact console output, including prompts -->
+   I dont understand what you want me to do
+   Here are the tasks in your list:
+  Bye. Hope to see you again soon!
   ```
-
