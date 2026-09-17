@@ -20,6 +20,22 @@ public class TaskHandler {
         System.out.println("   " + task);
     }
 
+    /** Deletes the selected task from the task list. */
+    public static void delete(String line) {
+        int taskNumber = getTaskNumberForDelete(line);
+        Task deletedTask = tasks[taskNumber - 1];
+
+        for (int i = taskNumber; i < numberOfTasks; i++) {
+            tasks[i - 1] = tasks[i];
+        }
+        numberOfTasks--;
+        tasks[numberOfTasks] = null;
+
+        System.out.println(" Noted. I've removed this task:");
+        System.out.println("   " + deletedTask);
+        System.out.println(" Now you have " + numberOfTasks + " tasks in the list.");
+    }
+
     /** Lists all stored tasks. */
     public static void list() {
         System.out.println(" Here are the tasks in your list:");
@@ -93,6 +109,28 @@ public class TaskHandler {
         return tasks[taskNumber - 1];
     }
 
+    private static int getTaskNumberForDelete(String line) {
+        String[] parts = line.split("\\s+");
+        if (parts.length != 2 || !parts[1].matches("-?\\d+")) {
+            throw new AthenaException("Please enter a valid task number after delete");
+        }
+
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException exception) {
+            throw new AthenaException("Please enter a valid task number after delete");
+        }
+
+        if (taskNumber <= 0) {
+            throw new AthenaException("Task number must be more than 0");
+        }
+        if (taskNumber > numberOfTasks) {
+            throw new AthenaException("Task number " + taskNumber + " does not exist in the list");
+        }
+        return taskNumber;
+    }
+
     private static void addTask(Task task) {
         tasks[numberOfTasks] = task;
         numberOfTasks++;
@@ -118,6 +156,9 @@ public class TaskHandler {
             case "unmark":
                 unmark(trimmedLine);
                 break;
+            case "delete":
+                delete(trimmedLine);
+                break;
             case "todo":
                 addTodo(trimmedLine.substring("todo".length()).trim());
                 break;
@@ -129,7 +170,7 @@ public class TaskHandler {
                 break;
             default:
                 throw new AthenaException("I dont understand what you want me to do, please start with deadline, "
-                        + "todo, event, mark, unmark, list or bye");
+                        + "todo, event, mark, unmark, delete, list or bye");
         }
     }
 }
