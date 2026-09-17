@@ -1,8 +1,8 @@
+import java.util.ArrayList;
+
 /** Handles user commands and stores tasks created during the session. */
 public class TaskHandler {
-    private static final int MAX_NUM_OF_TASKS = 100;
-    private static final Task[] tasks = new Task[MAX_NUM_OF_TASKS];
-    private static int numberOfTasks = 0;
+    private static final ArrayList<Task> tasks = new ArrayList<>();
 
     /** Marks the selected task as done. */
     public static void mark(String line) {
@@ -23,24 +23,18 @@ public class TaskHandler {
     /** Deletes the selected task from the task list. */
     public static void delete(String line) {
         int taskNumber = getTaskNumberForDelete(line);
-        Task deletedTask = tasks[taskNumber - 1];
-
-        for (int i = taskNumber; i < numberOfTasks; i++) {
-            tasks[i - 1] = tasks[i];
-        }
-        numberOfTasks--;
-        tasks[numberOfTasks] = null;
+        Task deletedTask = tasks.remove(taskNumber - 1);
 
         System.out.println(" Noted. I've removed this task:");
         System.out.println("   " + deletedTask);
-        System.out.println(" Now you have " + numberOfTasks + " tasks in the list.");
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /** Lists all stored tasks. */
     public static void list() {
         System.out.println(" Here are the tasks in your list:");
-        for (int i = 0; i < numberOfTasks; i++) {
-            System.out.println(" " + (i + 1) + "." + tasks[i]);
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println(" " + (i + 1) + "." + tasks.get(i));
         }
     }
 
@@ -103,10 +97,10 @@ public class TaskHandler {
             throw new AthenaException("please enter a numeric value for task number");
         }
         int taskNumber = Integer.parseInt(parts[1]);
-        if (taskNumber < 1 || taskNumber > numberOfTasks) {
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new AthenaException("Task does not exist");
         }
-        return tasks[taskNumber - 1];
+        return tasks.get(taskNumber - 1);
     }
 
     private static int getTaskNumberForDelete(String line) {
@@ -125,18 +119,17 @@ public class TaskHandler {
         if (taskNumber <= 0) {
             throw new AthenaException("Task number must be more than 0");
         }
-        if (taskNumber > numberOfTasks) {
+        if (taskNumber > tasks.size()) {
             throw new AthenaException("Task number " + taskNumber + " does not exist in the list");
         }
         return taskNumber;
     }
 
     private static void addTask(Task task) {
-        tasks[numberOfTasks] = task;
-        numberOfTasks++;
+        tasks.add(task);
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
-        System.out.println(" Now you have " + numberOfTasks + " tasks in the list.");
+        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /** Handles one user command and updates the task list as needed. */

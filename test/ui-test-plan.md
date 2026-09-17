@@ -113,3 +113,23 @@ This file is the executable specification for the `test-ui` project skill.
   Task number 2 does not exist in the list
   Bye. Hope to see you again soon!
   ```
+
+### Test case 6: Store more than 100 tasks
+
+- **Aim:** Verify that the task list grows dynamically beyond the old fixed capacity.
+- **Inputs:** Enter `todo task 1` through `todo task 101`, followed by:
+
+  ```text
+  delete 101
+  bye
+  ```
+
+- **Expected output:** The following relevant lines should appear:
+
+  ```text
+   Now you have 101 tasks in the list.
+   Noted. I've removed this task:
+     [T][ ] task 101
+   Now you have 100 tasks in the list.
+  Bye. Hope to see you again soon!
+  ```
