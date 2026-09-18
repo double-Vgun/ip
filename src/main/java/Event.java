@@ -11,6 +11,11 @@ public class Event extends Task {
     }
 
     @Override
+    String toFileString() {
+        return super.toFileString() + " | " + escapeFileField(from) + " | " + escapeFileField(by);
+    }
+
+    @Override
     public String toString() {
         return "[E]" + super.toString() + " (from: " + from +" to: "+by+ ")";
     }

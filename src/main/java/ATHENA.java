@@ -31,6 +31,12 @@ public class ATHENA {
     /** Starts the command-line task manager. */
     public static void main(String[] args) {
 
+        try {
+            TaskHandler.loadTasks();
+        } catch (AthenaException exception) {
+            System.out.println("Unable to start ATHENA. " + exception.getMessage());
+            return;
+        }
         greet();
         Scanner input = new Scanner(System.in);
 

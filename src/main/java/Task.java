@@ -26,6 +26,15 @@ public abstract class Task {
         return isDone;
     }
 
+    /** Returns this task in the format used for persistent storage. */
+    String toFileString() {
+        return type.name().charAt(0) + " | " + (isDone ? 1 : 0) + " | " + escapeFileField(description);
+    }
+
+    /** Returns text escaped for use as one field in the persistent file format. */
+    protected static String escapeFileField(String value) {
+        return value.replace("\\", "\\\\").replace("|", "\\|");
+    }
 
     @Override
     public String toString() {

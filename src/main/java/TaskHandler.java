@@ -1,13 +1,31 @@
+import java.util.Arrays;
+import java.util.List;
+
 import java.util.ArrayList;
 
 /** Handles user commands and stores tasks created during the session. */
 public class TaskHandler {
     private static final ArrayList<Task> tasks = new ArrayList<>();
 
+    /** Loads saved tasks from disk when a data file exists. */
+    public static void loadTasks() {
+        ArrayList<Task> loadedTasks = Storage.loadTasks();
+        for (int i = 0; i < loadedTasks.size(); i++) {
+            tasks.add(loadedTasks.get(i));
+        }
+    }
+
     /** Marks the selected task as done. */
     public static void mark(String line) {
         Task task = getTask(line);
+        boolean wasDone = task.isDone();
         task.setDone(true);
+        try {
+            saveTasks();
+        } catch (AthenaException exception) {
+            task.setDone(wasDone);
+            throw exception;
+        }
         System.out.println(" Nice! I've marked this task as done:");
         System.out.println("   " + task);
     }
@@ -15,7 +33,14 @@ public class TaskHandler {
     /** Marks the selected task as not done. */
     public static void unmark(String line) {
         Task task = getTask(line);
+        boolean wasDone = task.isDone();
         task.setDone(false);
+        try {
+            saveTasks();
+        } catch (AthenaException exception) {
+            task.setDone(wasDone);
+            throw exception;
+        }
         System.out.println(" OK, I've marked this task as not done yet:");
         System.out.println("   " + task);
     }
@@ -52,16 +77,19 @@ public class TaskHandler {
         if (content.isBlank()) {
             throw new AthenaException("Please tell me what deadline task to add");
         }
-        String[] parts = content.split(" /by ", 2);
-        if (parts.length < 2 || parts[0].isBlank()) {
-            throw new AthenaException("Invalid syntax. Please use the following syntax: deadline "
-                    + "{your_deadline_task}  /by {datetime} , where you can replace {your_deadline_task}  and  "
-                    + "{datetime}");
+        int byPosition = findMarker(content, "/by", 0);
+        if (byPosition < 0) {
+            throw new AthenaException("Invalid syntax. Use: deadline DESCRIPTION /by DATE");
         }
-        if (parts[1].isBlank()) {
-            throw new AthenaException(" Please add a date for deadline");
+        String description = content.substring(0, byPosition).trim();
+        String by = content.substring(byPosition + "/by".length()).trim();
+        if (description.isBlank()) {
+            throw new AthenaException("Please tell me what deadline task to add");
         }
-        addTask(new Deadline(parts[0], parts[1]));
+        if (by.isBlank()) {
+            throw new AthenaException("Please add a date for the deadline");
+        }
+        addTask(new Deadline(description, by));
     }
 
     /** Adds an event task from a complete command. */
@@ -70,33 +98,40 @@ public class TaskHandler {
         if (content.isBlank()) {
             throw new AthenaException("Please tell me what event task to add");
         }
-        if (!content.contains(" /from ") && !content.contains(" /to ")) {
-            throw new AthenaException("Invalid syntax. Please use the following syntax: event {your_event_task} "
-                    + "/from {start_datetime} /to {end_datetime}, where you can replace {your_event_task}, "
-                    + "{start_datetime} and {end_datetime}");
+        int fromPosition = findMarker(content, "/from", 0);
+        if (fromPosition < 0) {
+            throw new AthenaException("Invalid syntax. Use: event DESCRIPTION /from START /to END");
         }
-        if (!content.contains(" /from ")) {
-            throw new AthenaException("please enter an start datetime value after /from");
+        int toPosition = findMarker(content, "/to", fromPosition + "/from".length());
+        if (toPosition < 0) {
+            throw new AthenaException("Invalid syntax. Use: event DESCRIPTION /from START /to END");
         }
-        String[] fromParts = content.split(" /from ", 2);
-        if (fromParts.length < 2 || fromParts[1].isBlank()) {
-            throw new AthenaException("please enter an end datetime value after /to");
+        String description = content.substring(0, fromPosition).trim();
+        String from = content.substring(fromPosition + "/from".length(), toPosition).trim();
+        String to = content.substring(toPosition + "/to".length()).trim();
+        if (description.isBlank()) {
+            throw new AthenaException("Please tell me what event task to add");
         }
-        if (!fromParts[1].contains(" /to ")) {
-            throw new AthenaException("please enter an end datetime value after /to");
+        if (from.isBlank()) {
+            throw new AthenaException("Please add a start time for the event");
         }
-        String[] toParts = fromParts[1].split(" /to ", 2);
-        if (toParts[1].isBlank()) {
-            throw new AthenaException("please enter an end datetime value after /to");
+        if (to.isBlank()) {
+            throw new AthenaException("Please add an end time for the event");
         }
-        addTask(new Event(fromParts[0], toParts[0], toParts[1]));
+        addTask(new Event(description, from, to));
     }
+
     private static Task getTask(String line) {
-        String[] parts = line.split(" ");
-        if (parts.length < 2 || !parts[1].matches("\\d+")) {
-            throw new AthenaException("please enter a numeric value for task number");
+        String[] parts = line.trim().split("\\s+");
+        if (parts.length != 2 || !parts[1].matches("\\d+")) {
+            throw new AthenaException("Please enter exactly one numeric task number");
         }
-        int taskNumber = Integer.parseInt(parts[1]);
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException exception) {
+            throw new AthenaException("Task number is too large", exception);
+        }
         if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new AthenaException("Task does not exist");
         }
@@ -125,11 +160,35 @@ public class TaskHandler {
         return taskNumber;
     }
 
+    private static int findMarker(String text, String marker, int fromIndex) {
+        int position = text.indexOf(marker, fromIndex);
+        while (position >= 0) {
+            int endPosition = position + marker.length();
+            boolean hasStartBoundary = position == 0 || Character.isWhitespace(text.charAt(position - 1));
+            boolean hasEndBoundary = endPosition == text.length()
+                    || Character.isWhitespace(text.charAt(endPosition));
+            if (hasStartBoundary && hasEndBoundary) {
+                return position;
+            }
+            position = text.indexOf(marker, position + 1);
+        }
+        return -1;
+    }
+
     private static void addTask(Task task) {
         tasks.add(task);
+        try {
+            saveTasks();
+        } catch (AthenaException exception) {
+            throw exception;
+        }
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+    }
+
+    private static void saveTasks() {
+        Storage.saveTasks(tasks, numberOfTasks);
     }
 
     /** Handles one user command and updates the task list as needed. */
@@ -141,6 +200,9 @@ public class TaskHandler {
         String command = trimmedLine.split(" ", 2)[0];
         switch (command) {
             case "list":
+                if (!trimmedLine.equals("list")) {
+                    throw new AthenaException("The list command does not take additional arguments");
+                }
                 list();
                 break;
             case "mark":

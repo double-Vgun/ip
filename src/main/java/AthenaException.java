@@ -4,4 +4,9 @@ public class AthenaException extends RuntimeException {
     public AthenaException(String message) {
         super(message);
     }
+
+    /** Creates an exception with the given error message and underlying cause. */
+    public AthenaException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
