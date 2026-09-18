@@ -28,7 +28,7 @@ This file is the executable specification for the `test-ui` project skill.
 - **Expected output:**
 
   ```text
-  I dont understand what you want me to do, please start with deadline, todo, event, mark, unmark, list or bye
+  I dont understand what you want me to do, please start with deadline, todo, event, mark, unmark, delete, list or bye
    Here are the tasks in your list:
   Bye. Hope to see you again soon!
   ```
@@ -190,23 +190,7 @@ This file is the executable specification for the `test-ui` project skill.
   Bye. Hope to see you again soon!
   ```
 
-### Test case 7: Enforce the task-list capacity
-
-- **Aim:** Verify that adding a 101st task is rejected without altering the 100 tasks already saved.
-- **Inputs:** Enter `todo task 1` through `todo task 101`, followed by `bye`.
-- **Expected final responses:**
-
-  ```text
-   Got it. I've added this task:
-     [T][ ] task 100
-   Now you have 100 tasks in the list.
-  Task list is full. No more tasks can be added
-  Bye. Hope to see you again soon!
-  ```
-
-- **Expected `data/athena.txt`:** Exactly 100 lines, ending with `T | 0 | task 100`.
-
-### Test case 8: Roll back a task when saving fails
+### Test case 7: Roll back a task when saving fails
 
 - **Aim:** Verify that a failed save is reported and does not leave the attempted task in memory.
 - **Preparation:** Replace the `data` directory with a regular file named `data` so `data/athena.txt` cannot be
@@ -227,7 +211,7 @@ This file is the executable specification for the `test-ui` project skill.
   Bye. Hope to see you again soon!
   ```
 
-### Test case 9: Start and save without an existing data folder
+### Test case 8: Start and save without an existing data folder
 
 - **Aim:** Verify that ATHENA starts with an empty list when neither the data file nor its folder exists, then creates
   both when the first task is saved.
@@ -256,9 +240,9 @@ This file is the executable specification for the `test-ui` project skill.
   T | 0 | read book
   ```
 
-### Test case 2: Delete a task and renumber the remaining tasks
+### Test case 9: Delete a task and renumber the remaining tasks
 
-- **Aim:** Verify that deleting a valid task removes it and keeps the task numbers continuous.
+- **Aim:** Verify that deleting a valid task removes it, persists the change, and keeps task numbers continuous.
 - **Inputs:**
 
   ```text
@@ -273,6 +257,15 @@ This file is the executable specification for the `test-ui` project skill.
 - **Expected output:**
 
   ```text
+   Got it. I've added this task:
+     [T][ ] first task
+   Now you have 1 tasks in the list.
+   Got it. I've added this task:
+     [T][ ] second task
+   Now you have 2 tasks in the list.
+   Got it. I've added this task:
+     [T][ ] third task
+   Now you have 3 tasks in the list.
    Noted. I've removed this task:
      [T][ ] second task
    Now you have 2 tasks in the list.
@@ -282,7 +275,14 @@ This file is the executable specification for the `test-ui` project skill.
   Bye. Hope to see you again soon!
   ```
 
-### Test case 3: Reject an invalid delete argument
+- **Expected `data/athena.txt`:**
+
+  ```text
+  T | 0 | first task
+  T | 0 | third task
+  ```
+
+### Test case 10: Reject an invalid delete argument
 
 - **Aim:** Verify that `delete` requires exactly one integer task number.
 - **Inputs:**
@@ -303,7 +303,7 @@ This file is the executable specification for the `test-ui` project skill.
   Bye. Hope to see you again soon!
   ```
 
-### Test case 4: Reject a non-positive delete number
+### Test case 11: Reject a non-positive delete number
 
 - **Aim:** Verify that task numbers for `delete` must be greater than zero.
 - **Inputs:**
@@ -322,7 +322,7 @@ This file is the executable specification for the `test-ui` project skill.
   Bye. Hope to see you again soon!
   ```
 
-### Test case 5: Reject a task number outside the list
+### Test case 12: Reject a task number outside the list
 
 - **Aim:** Verify that `delete` cannot select a task number that does not exist.
 - **Inputs:**
@@ -336,11 +336,14 @@ This file is the executable specification for the `test-ui` project skill.
 - **Expected output:**
 
   ```text
+   Got it. I've added this task:
+     [T][ ] only task
+   Now you have 1 tasks in the list.
   Task number 2 does not exist in the list
   Bye. Hope to see you again soon!
   ```
 
-### Test case 6: Store more than 100 tasks
+### Test case 13: Store more than 100 tasks
 
 - **Aim:** Verify that the task list grows dynamically beyond the old fixed capacity.
 - **Inputs:** Enter `todo task 1` through `todo task 101`, followed by:

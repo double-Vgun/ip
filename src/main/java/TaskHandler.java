@@ -1,6 +1,3 @@
-import java.util.Arrays;
-import java.util.List;
-
 import java.util.ArrayList;
 
 /** Handles user commands and stores tasks created during the session. */
@@ -9,10 +6,8 @@ public class TaskHandler {
 
     /** Loads saved tasks from disk when a data file exists. */
     public static void loadTasks() {
-        ArrayList<Task> loadedTasks = Storage.loadTasks();
-        for (int i = 0; i < loadedTasks.size(); i++) {
-            tasks.add(loadedTasks.get(i));
-        }
+        tasks.clear();
+        tasks.addAll(Storage.loadTasks());
     }
 
     /** Marks the selected task as done. */
@@ -49,6 +44,12 @@ public class TaskHandler {
     public static void delete(String line) {
         int taskNumber = getTaskNumberForDelete(line);
         Task deletedTask = tasks.remove(taskNumber - 1);
+        try {
+            saveTasks();
+        } catch (AthenaException exception) {
+            tasks.add(taskNumber - 1, deletedTask);
+            throw exception;
+        }
 
         System.out.println(" Noted. I've removed this task:");
         System.out.println("   " + deletedTask);
@@ -180,6 +181,7 @@ public class TaskHandler {
         try {
             saveTasks();
         } catch (AthenaException exception) {
+            tasks.remove(tasks.size() - 1);
             throw exception;
         }
         System.out.println(" Got it. I've added this task:");
@@ -188,7 +190,7 @@ public class TaskHandler {
     }
 
     private static void saveTasks() {
-        Storage.saveTasks(tasks, numberOfTasks);
+        Storage.saveTasks(tasks);
     }
 
     /** Handles one user command and updates the task list as needed. */

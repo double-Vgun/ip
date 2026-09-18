@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.List;
 
 /** Reads and writes tasks using ATHENA's persistent file format. */
 final class Storage {
@@ -16,14 +15,15 @@ final class Storage {
     private Storage() {
     }
 
-    static List<Task> loadTasks() {
+    static ArrayList<Task> loadTasks() {
         if (Files.notExists(DATA_FILE_PATH)) {
-            return List.of();
+            return new ArrayList<>();
         }
 
         try {
-            List<Task> loadedTasks = new ArrayList<>();
-            List<String> lines = Files.readAllLines(DATA_FILE_PATH, StandardCharsets.UTF_8);
+            ArrayList<Task> loadedTasks = new ArrayList<>();
+            ArrayList<String> lines = new ArrayList<>(
+                    Files.readAllLines(DATA_FILE_PATH, StandardCharsets.UTF_8));
             for (int i = 0; i < lines.size(); i++) {
                 if (!lines.get(i).isBlank()) {
                     loadedTasks.add(parseTask(lines.get(i), i + 1));
@@ -35,10 +35,10 @@ final class Storage {
         }
     }
 
-    static void saveTasks(Task[] tasks, int numberOfTasks) {
-        List<String> lines = new ArrayList<>();
-        for (int i = 0; i < numberOfTasks; i++) {
-            lines.add(tasks[i].toFileString());
+    static void saveTasks(ArrayList<Task> tasks) {
+        ArrayList<String> lines = new ArrayList<>();
+        for (Task task : tasks) {
+            lines.add(task.toFileString());
         }
 
         try {
@@ -70,7 +70,7 @@ final class Storage {
     }
 
     private static Task parseTask(String line, int lineNumber) {
-        List<String> fields = splitFields(line);
+        ArrayList<String> fields = splitFields(line);
         if (fields.size() < 3) {
             throw invalidData(lineNumber, "not enough fields");
         }
@@ -100,8 +100,8 @@ final class Storage {
         return task;
     }
 
-    private static List<String> splitFields(String line) {
-        List<String> fields = new ArrayList<>();
+    private static ArrayList<String> splitFields(String line) {
+        ArrayList<String> fields = new ArrayList<>();
         StringBuilder field = new StringBuilder();
         boolean isEscaping = false;
         for (int i = 0; i < line.length(); i++) {
@@ -145,7 +145,7 @@ final class Storage {
         return value;
     }
 
-    private static void requireFieldCount(List<String> fields, int expectedCount, int lineNumber) {
+    private static void requireFieldCount(ArrayList<String> fields, int expectedCount, int lineNumber) {
         if (fields.size() != expectedCount) {
             throw invalidData(lineNumber, "incorrect number of fields");
         }
