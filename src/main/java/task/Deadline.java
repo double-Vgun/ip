@@ -1,3 +1,5 @@
+package task;
+
 /** Represents a task that must be completed by a specified time. */
 public class Deadline extends Task {
     private final String by;
@@ -9,7 +11,7 @@ public class Deadline extends Task {
     }
 
     @Override
-    String toFileString() {
+    public String toFileString() {
         return super.toFileString() + " | " + escapeFileField(by);
     }
 

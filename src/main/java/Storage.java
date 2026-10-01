@@ -7,6 +7,12 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 
+import task.Deadline;
+import task.Event;
+import task.Task;
+import task.TaskList;
+import task.ToDo;
+
 /** Reads and writes tasks using ATHENA's persistent file format. */
 final class Storage {
     private static final Path DATA_FILE_PATH = Path.of("data", "athena.txt");
@@ -15,9 +21,9 @@ final class Storage {
     private Storage() {
     }
 
-    static ArrayList<Task> loadTasks() {
+    static TaskList loadTasks() {
         if (Files.notExists(DATA_FILE_PATH)) {
-            return new ArrayList<>();
+            return new TaskList();
         }
 
         try {
@@ -29,13 +35,13 @@ final class Storage {
                     loadedTasks.add(parseTask(lines.get(i), i + 1));
                 }
             }
-            return loadedTasks;
+            return new TaskList(loadedTasks);
         } catch (IOException | SecurityException exception) {
             throw new AthenaException("Unable to load tasks from " + DATA_FILE_PATH, exception);
         }
     }
 
-    static void saveTasks(ArrayList<Task> tasks) {
+    static void saveTasks(TaskList tasks) {
         ArrayList<String> lines = new ArrayList<>();
         for (Task task : tasks) {
             lines.add(task.toFileString());

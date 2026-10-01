@@ -1,15 +1,17 @@
-import java.util.ArrayList;
-
 import command.CommandExecutor;
+import task.Deadline;
+import task.Event;
+import task.Task;
+import task.TaskList;
+import task.ToDo;
 
 /** Handles user commands and stores tasks created during the session. */
 public class TaskHandler implements CommandExecutor {
-    private final ArrayList<Task> tasks = new ArrayList<>();
+    private TaskList tasks = new TaskList();
 
     /** Loads saved tasks from disk when a data file exists. */
     public void loadTasks() {
-        tasks.clear();
-        tasks.addAll(Storage.loadTasks());
+        tasks = Storage.loadTasks();
     }
 
     /** Marks the selected task as done. */
