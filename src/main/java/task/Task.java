@@ -42,6 +42,7 @@ public abstract class Task {
         return value.replace("\\", "\\\\").replace("|", "\\|");
     }
 
+    /** Returns a display-friendly representation of this task and its completion state. */
     @Override
     public String toString() {
         if (isDone) {

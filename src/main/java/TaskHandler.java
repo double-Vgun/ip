@@ -151,6 +151,7 @@ public class TaskHandler implements CommandExecutor {
         addTask(new Event(description, from, to));
     }
 
+    /** Returns the task selected by a command containing a one-based task number. */
     private Task getTask(String line) {
         String[] parts = line.trim().split("\\s+");
         if (parts.length != 2 || !parts[1].matches("\\d+")) {
@@ -168,6 +169,7 @@ public class TaskHandler implements CommandExecutor {
         return tasks.get(taskNumber - 1);
     }
 
+    /** Returns the validated one-based task number from a delete command. */
     private int getTaskNumberForDelete(String line) {
         String[] parts = line.split("\\s+");
         if (parts.length != 2 || !parts[1].matches("-?\\d+")) {
@@ -190,6 +192,7 @@ public class TaskHandler implements CommandExecutor {
         return taskNumber;
     }
 
+    /** Returns the position of a command marker that is surrounded by text boundaries. */
     private static int findMarker(String text, String marker, int fromIndex) {
         int position = text.indexOf(marker, fromIndex);
         while (position >= 0) {
@@ -205,6 +208,7 @@ public class TaskHandler implements CommandExecutor {
         return -1;
     }
 
+    /** Adds and saves a task, rolling back the addition if persistence fails. */
     private void addTask(Task task) {
         tasks.add(task);
         try {
@@ -218,6 +222,7 @@ public class TaskHandler implements CommandExecutor {
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
     }
 
+    /** Saves the current task list to persistent storage. */
     private void saveTasks() {
         Storage.saveTasks(tasks);
     }

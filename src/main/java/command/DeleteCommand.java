@@ -7,6 +7,7 @@ public class DeleteCommand extends Command {
         super(fullCommand);
     }
 
+    /** Executes this command by deleting the task selected by the user. */
     @Override
     public void execute(CommandExecutor executor) {
         executor.delete(getFullCommand());

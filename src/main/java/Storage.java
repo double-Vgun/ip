@@ -21,6 +21,7 @@ final class Storage {
     private Storage() {
     }
 
+    /** Returns the tasks stored in the data file, or an empty list when no data file exists. */
     static TaskList loadTasks() {
         if (Files.notExists(DATA_FILE_PATH)) {
             return new TaskList();
@@ -41,6 +42,7 @@ final class Storage {
         }
     }
 
+    /** Saves all tasks to the data file, replacing any previously stored tasks. */
     static void saveTasks(TaskList tasks) {
         ArrayList<String> lines = new ArrayList<>();
         for (Task task : tasks) {
@@ -58,6 +60,7 @@ final class Storage {
         }
     }
 
+    /** Replaces the data file with the completed temporary file as safely as the file system allows. */
     private static void replaceDataFile() throws IOException {
         try {
             Files.move(TEMPORARY_FILE_PATH, DATA_FILE_PATH,
@@ -67,6 +70,7 @@ final class Storage {
         }
     }
 
+    /** Deletes an incomplete temporary file and attaches any cleanup failure to the original exception. */
     private static void deleteTemporaryFile(Exception originalException) {
         try {
             Files.deleteIfExists(TEMPORARY_FILE_PATH);
@@ -75,6 +79,7 @@ final class Storage {
         }
     }
 
+    /** Returns the task represented by one line of the persistent data file. */
     private static Task parseTask(String line, int lineNumber) {
         ArrayList<String> fields = splitFields(line);
         if (fields.size() < 3) {
@@ -106,6 +111,7 @@ final class Storage {
         return task;
     }
 
+    /** Returns the unescaped fields from one line of the persistent data file. */
     private static ArrayList<String> splitFields(String line) {
         ArrayList<String> fields = new ArrayList<>();
         StringBuilder field = new StringBuilder();
@@ -134,6 +140,7 @@ final class Storage {
         return fields;
     }
 
+    /** Returns the completion state represented by a stored numeric value. */
     private static boolean parseDoneState(String value, int lineNumber) {
         if (value.equals("1")) {
             return true;
@@ -144,6 +151,7 @@ final class Storage {
         throw invalidData(lineNumber, "completion state must be 0 or 1");
     }
 
+    /** Returns a required text field after verifying that it is not blank. */
     private static String requireText(String value, int lineNumber, String fieldName) {
         if (value.isBlank()) {
             throw invalidData(lineNumber, fieldName + " cannot be blank");
@@ -151,12 +159,14 @@ final class Storage {
         return value;
     }
 
+    /** Verifies that a stored task contains the expected number of fields. */
     private static void requireFieldCount(ArrayList<String> fields, int expectedCount, int lineNumber) {
         if (fields.size() != expectedCount) {
             throw invalidData(lineNumber, "incorrect number of fields");
         }
     }
 
+    /** Returns an exception that identifies an invalid line in the data file. */
     private static AthenaException invalidData(int lineNumber, String reason) {
         return new AthenaException("Invalid data in " + DATA_FILE_PATH + " at line " + lineNumber + ": " + reason);
     }

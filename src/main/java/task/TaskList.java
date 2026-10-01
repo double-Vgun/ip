@@ -44,6 +44,7 @@ public class TaskList implements Iterable<Task> {
         return tasks.size();
     }
 
+    /** Returns an iterator that does not support modifying the task list. */
     @Override
     public Iterator<Task> iterator() {
         return Collections.unmodifiableList(tasks).iterator();

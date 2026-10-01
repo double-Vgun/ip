@@ -10,11 +10,13 @@ public class Deadline extends Task {
         this.by = by;
     }
 
+    /** Returns this deadline in the format used for persistent storage. */
     @Override
     public String toFileString() {
         return super.toFileString() + " | " + escapeFileField(by);
     }
 
+    /** Returns a display-friendly representation of this deadline. */
     @Override
     public String toString() {
         return "[D]" + super.toString() + " (by: " + by + ")";
