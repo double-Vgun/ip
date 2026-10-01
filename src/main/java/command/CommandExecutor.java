@@ -8,6 +8,9 @@ public interface CommandExecutor {
     /** Deletes the task selected by the given command. */
     void delete(String fullCommand);
 
+    /** Finds tasks whose descriptions contain the keyword in the given command. */
+    void find(String fullCommand);
+
     /** Lists tasks after validating the given command. */
     void list(String fullCommand);
 
