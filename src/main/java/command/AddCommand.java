@@ -7,6 +7,7 @@ public class AddCommand extends Command {
         super(fullCommand);
     }
 
+    /** Executes this command by adding the task described by the user's input. */
     @Override
     public void execute(CommandExecutor executor) {
         executor.add(getFullCommand());

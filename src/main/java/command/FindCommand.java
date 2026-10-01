@@ -7,6 +7,7 @@ public class FindCommand extends Command {
         super(fullCommand);
     }
 
+    /** Executes this command by finding tasks that contain the user's keyword. */
     @Override
     public void execute(CommandExecutor executor) {
         executor.find(getFullCommand());

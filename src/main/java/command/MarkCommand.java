@@ -7,6 +7,7 @@ public class MarkCommand extends Command {
         super(fullCommand);
     }
 
+    /** Executes this command by marking the selected task as done. */
     @Override
     public void execute(CommandExecutor executor) {
         executor.mark(getFullCommand());

@@ -7,11 +7,13 @@ public class ExitCommand extends Command {
         super(fullCommand);
     }
 
+    /** Executes this command without performing a task operation. */
     @Override
     public void execute(CommandExecutor executor) {
         // No task operation is needed when exiting.
     }
 
+    /** Returns whether this command should end the application. */
     @Override
     public boolean isExit() {
         return true;

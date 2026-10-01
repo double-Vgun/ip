@@ -12,11 +12,13 @@ public class Event extends Task {
         this.from = from;
     }
 
+    /** Returns this event in the format used for persistent storage. */
     @Override
     public String toFileString() {
         return super.toFileString() + " | " + escapeFileField(from) + " | " + escapeFileField(by);
     }
 
+    /** Returns a display-friendly representation of this event. */
     @Override
     public String toString() {
         return "[E]" + super.toString() + " (from: " + from + " to: " + by + ")";

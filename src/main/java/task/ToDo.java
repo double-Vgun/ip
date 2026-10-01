@@ -7,6 +7,7 @@ public class ToDo extends Task {
         super(description, TaskType.TODO);
     }
 
+    /** Returns a display-friendly representation of this to-do task. */
     @Override
     public String toString() {
         return "[T]" + super.toString();

@@ -7,6 +7,7 @@ public class ListCommand extends Command {
         super(fullCommand);
     }
 
+    /** Executes this command by listing the stored tasks. */
     @Override
     public void execute(CommandExecutor executor) {
         executor.list(getFullCommand());
