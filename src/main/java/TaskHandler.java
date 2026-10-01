@@ -1,17 +1,20 @@
 import java.util.ArrayList;
 
+import command.CommandExecutor;
+
 /** Handles user commands and stores tasks created during the session. */
-public class TaskHandler {
-    private static final ArrayList<Task> tasks = new ArrayList<>();
+public class TaskHandler implements CommandExecutor {
+    private final ArrayList<Task> tasks = new ArrayList<>();
 
     /** Loads saved tasks from disk when a data file exists. */
-    public static void loadTasks() {
+    public void loadTasks() {
         tasks.clear();
         tasks.addAll(Storage.loadTasks());
     }
 
     /** Marks the selected task as done. */
-    public static void mark(String line) {
+    @Override
+    public void mark(String line) {
         Task task = getTask(line);
         boolean wasDone = task.isDone();
         task.setDone(true);
@@ -26,7 +29,8 @@ public class TaskHandler {
     }
 
     /** Marks the selected task as not done. */
-    public static void unmark(String line) {
+    @Override
+    public void unmark(String line) {
         Task task = getTask(line);
         boolean wasDone = task.isDone();
         task.setDone(false);
@@ -41,7 +45,8 @@ public class TaskHandler {
     }
 
     /** Deletes the selected task from the task list. */
-    public static void delete(String line) {
+    @Override
+    public void delete(String line) {
         int taskNumber = getTaskNumberForDelete(line);
         Task deletedTask = tasks.remove(taskNumber - 1);
         try {
@@ -56,8 +61,12 @@ public class TaskHandler {
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
     }
 
-    /** Lists all stored tasks. */
-    public static void list() {
+    /** Lists all stored tasks after validating the complete command. */
+    @Override
+    public void list(String line) {
+        if (!line.equals("list")) {
+            throw new AthenaException("The list command does not take additional arguments");
+        }
         System.out.println(" Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println(" " + (i + 1) + "." + tasks.get(i));
@@ -65,7 +74,7 @@ public class TaskHandler {
     }
 
     /** Adds a todo task. */
-    public static void addTodo(String line) {
+    public void addTodo(String line) {
         if (line.isBlank()) {
             throw new AthenaException(" Please tell me what todo task to add");
         }
@@ -73,7 +82,7 @@ public class TaskHandler {
     }
 
     /** Adds a deadline task from a complete command. */
-    public static void addDeadline(String line) {
+    public void addDeadline(String line) {
         String content = line.substring("deadline".length()).trim();
         if (content.isBlank()) {
             throw new AthenaException("Please tell me what deadline task to add");
@@ -94,7 +103,7 @@ public class TaskHandler {
     }
 
     /** Adds an event task from a complete command. */
-    public static void addEvent(String line) {
+    public void addEvent(String line) {
         String content = line.substring("event".length()).trim();
         if (content.isBlank()) {
             throw new AthenaException("Please tell me what event task to add");
@@ -122,7 +131,7 @@ public class TaskHandler {
         addTask(new Event(description, from, to));
     }
 
-    private static Task getTask(String line) {
+    private Task getTask(String line) {
         String[] parts = line.trim().split("\\s+");
         if (parts.length != 2 || !parts[1].matches("\\d+")) {
             throw new AthenaException("Please enter exactly one numeric task number");
@@ -139,7 +148,7 @@ public class TaskHandler {
         return tasks.get(taskNumber - 1);
     }
 
-    private static int getTaskNumberForDelete(String line) {
+    private int getTaskNumberForDelete(String line) {
         String[] parts = line.split("\\s+");
         if (parts.length != 2 || !parts[1].matches("-?\\d+")) {
             throw new AthenaException("Please enter a valid task number after delete");
@@ -176,7 +185,7 @@ public class TaskHandler {
         return -1;
     }
 
-    private static void addTask(Task task) {
+    private void addTask(Task task) {
         tasks.add(task);
         try {
             saveTasks();
@@ -189,45 +198,26 @@ public class TaskHandler {
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
     }
 
-    private static void saveTasks() {
+    private void saveTasks() {
         Storage.saveTasks(tasks);
     }
 
-    /** Handles one user command and updates the task list as needed. */
-    public TaskHandler(String line) {
-        String trimmedLine = line.trim();
-        if (trimmedLine.isEmpty()) {
-            throw new AthenaException("please fill in something");
-        }
-        String command = trimmedLine.split(" ", 2)[0];
-        switch (command) {
-            case "list":
-                if (!trimmedLine.equals("list")) {
-                    throw new AthenaException("The list command does not take additional arguments");
-                }
-                list();
-                break;
-            case "mark":
-                mark(trimmedLine);
-                break;
-            case "unmark":
-                unmark(trimmedLine);
-                break;
-            case "delete":
-                delete(trimmedLine);
-                break;
+    /** Adds the task described by a complete add command. */
+    @Override
+    public void add(String line) {
+        String commandWord = line.split("\\s+", 2)[0];
+        switch (commandWord) {
             case "todo":
-                addTodo(trimmedLine.substring("todo".length()).trim());
+                addTodo(line.substring("todo".length()).trim());
                 break;
             case "deadline":
-                addDeadline(trimmedLine);
+                addDeadline(line);
                 break;
             case "event":
-                addEvent(trimmedLine);
+                addEvent(line);
                 break;
             default:
-                throw new AthenaException("I dont understand what you want me to do, please start with deadline, "
-                        + "todo, event, mark, unmark, delete, list or bye");
+                throw new IllegalArgumentException("Unsupported add command: " + commandWord);
         }
     }
 }

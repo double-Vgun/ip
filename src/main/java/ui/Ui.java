@@ -43,11 +43,9 @@ public class Ui implements AutoCloseable {
         System.out.println(HORIZONTAL_LINE);
     }
 
-    /** Displays the farewell message. */
+    /** Displays the farewell message without surrounding separators. */
     public void showFarewell() {
-        showHorizontalLine();
         System.out.println("Bye. Hope to see you again soon!");
-        showHorizontalLine();
     }
 
     /** Displays an error message. */
