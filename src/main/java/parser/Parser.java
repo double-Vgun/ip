@@ -4,6 +4,7 @@ import command.AddCommand;
 import command.Command;
 import command.DeleteCommand;
 import command.ExitCommand;
+import command.FindCommand;
 import command.ListCommand;
 import command.MarkCommand;
 import command.UnmarkCommand;
@@ -28,6 +29,8 @@ public final class Parser {
                 return new AddCommand(fullCommand);
             case "delete":
                 return new DeleteCommand(fullCommand);
+            case "find":
+                return new FindCommand(fullCommand);
             case "list":
                 return new ListCommand(fullCommand);
             case "mark":
@@ -43,6 +46,6 @@ public final class Parser {
                 break;
         }
         throw new ParserException("I dont understand what you want me to do, please start with deadline, "
-                + "todo, event, mark, unmark, delete, list or bye");
+                + "todo, event, mark, unmark, delete, find, list or bye");
     }
 }

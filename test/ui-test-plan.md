@@ -28,7 +28,7 @@ This file is the executable specification for the `test-ui` project skill.
 - **Expected output:**
 
   ```text
-  I dont understand what you want me to do, please start with deadline, todo, event, mark, unmark, delete, list or bye
+  I dont understand what you want me to do, please start with deadline, todo, event, mark, unmark, delete, find, list or bye
    Here are the tasks in your list:
   Bye. Hope to see you again soon!
   ```
@@ -360,5 +360,65 @@ This file is the executable specification for the `test-ui` project skill.
    Noted. I've removed this task:
      [T][ ] task 101
    Now you have 100 tasks in the list.
+  Bye. Hope to see you again soon!
+  ```
+
+### Test case 14: Find tasks by a keyword in their descriptions
+
+- **Aim:** Verify that `find` lists only descriptions containing the keyword, in their original order.
+- **Inputs:**
+
+  ```text
+  todo read book
+  deadline return book /by June 6th
+  todo read newspaper
+  mark 1
+  mark 2
+  find book
+  bye
+  ```
+
+- **Expected output:**
+
+  ```text
+   Got it. I've added this task:
+     [T][ ] read book
+   Now you have 1 tasks in the list.
+   Got it. I've added this task:
+     [D][ ] return book (by: June 6th)
+   Now you have 2 tasks in the list.
+   Got it. I've added this task:
+     [T][ ] read newspaper
+   Now you have 3 tasks in the list.
+   Nice! I've marked this task as done:
+     [T][X] read book
+   Nice! I've marked this task as done:
+     [D][X] return book (by: June 6th)
+   Here are the matching tasks in your list:
+   1.[T][X] read book
+   2.[D][X] return book (by: June 6th)
+  Bye. Hope to see you again soon!
+  ```
+
+### Test case 15: Handle an empty find keyword and no matches
+
+- **Aim:** Verify that `find` requires a keyword and displays an empty result list when no descriptions match.
+- **Inputs:**
+
+  ```text
+  todo read book
+  find
+  find newspaper
+  bye
+  ```
+
+- **Expected output:**
+
+  ```text
+   Got it. I've added this task:
+     [T][ ] read book
+   Now you have 1 tasks in the list.
+  Please enter a keyword after find
+   Here are the matching tasks in your list:
   Bye. Hope to see you again soon!
   ```

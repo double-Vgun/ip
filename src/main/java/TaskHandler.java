@@ -63,6 +63,24 @@ public class TaskHandler implements CommandExecutor {
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
     }
 
+    /** Finds tasks whose descriptions contain the supplied keyword. */
+    @Override
+    public void find(String line) {
+        String keyword = line.substring("find".length()).trim();
+        if (keyword.isBlank()) {
+            throw new AthenaException("Please enter a keyword after find");
+        }
+
+        System.out.println(" Here are the matching tasks in your list:");
+        int matchNumber = 1;
+        for (Task task : tasks) {
+            if (task.getDescription().contains(keyword)) {
+                System.out.println(" " + matchNumber + "." + task);
+                matchNumber++;
+            }
+        }
+    }
+
     /** Lists all stored tasks after validating the complete command. */
     @Override
     public void list(String line) {
