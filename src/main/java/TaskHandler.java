@@ -5,16 +5,27 @@ import task.Task;
 import task.TaskList;
 import task.ToDo;
 
-/** Handles user commands and stores tasks created during the session. */
+/**
+ * Handles user commands and stores tasks created during the session.
+ */
 public class TaskHandler implements CommandExecutor {
     private TaskList tasks = new TaskList();
 
-    /** Loads saved tasks from disk when a data file exists. */
+    /**
+     * Loads saved tasks from disk when a data file exists.
+     *
+     * @throws AthenaException If the saved tasks cannot be loaded.
+     */
     public void loadTasks() {
         tasks = Storage.loadTasks();
     }
 
-    /** Marks the selected task as done. */
+    /**
+     * Marks the selected task as done.
+     *
+     * @param line Complete mark command containing the task number.
+     * @throws AthenaException If the task number is invalid or the change cannot be saved.
+     */
     @Override
     public void mark(String line) {
         Task task = getTask(line);
@@ -30,7 +41,12 @@ public class TaskHandler implements CommandExecutor {
         System.out.println("   " + task);
     }
 
-    /** Marks the selected task as not done. */
+    /**
+     * Marks the selected task as not done.
+     *
+     * @param line Complete unmark command containing the task number.
+     * @throws AthenaException If the task number is invalid or the change cannot be saved.
+     */
     @Override
     public void unmark(String line) {
         Task task = getTask(line);
@@ -46,7 +62,12 @@ public class TaskHandler implements CommandExecutor {
         System.out.println("   " + task);
     }
 
-    /** Deletes the selected task from the task list. */
+    /**
+     * Deletes the selected task from the task list.
+     *
+     * @param line Complete delete command containing the task number.
+     * @throws AthenaException If the task number is invalid or the change cannot be saved.
+     */
     @Override
     public void delete(String line) {
         int taskNumber = getTaskNumberForDelete(line);
@@ -63,7 +84,12 @@ public class TaskHandler implements CommandExecutor {
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
     }
 
-    /** Finds tasks whose descriptions contain the supplied keyword. */
+    /**
+     * Finds tasks whose descriptions contain the supplied keyword.
+     *
+     * @param line Complete find command containing the keyword.
+     * @throws AthenaException If no keyword is provided.
+     */
     @Override
     public void find(String line) {
         String keyword = line.substring("find".length()).trim();
@@ -81,7 +107,12 @@ public class TaskHandler implements CommandExecutor {
         }
     }
 
-    /** Lists all stored tasks after validating the complete command. */
+    /**
+     * Lists all stored tasks after validating the complete command.
+     *
+     * @param line Complete list command.
+     * @throws AthenaException If the command contains additional arguments.
+     */
     @Override
     public void list(String line) {
         if (!line.equals("list")) {
@@ -93,7 +124,12 @@ public class TaskHandler implements CommandExecutor {
         }
     }
 
-    /** Adds a todo task. */
+    /**
+     * Adds a todo task.
+     *
+     * @param line Description of the todo task.
+     * @throws AthenaException If the description is blank or the task cannot be saved.
+     */
     public void addTodo(String line) {
         if (line.isBlank()) {
             throw new AthenaException(" Please tell me what todo task to add");
@@ -101,7 +137,12 @@ public class TaskHandler implements CommandExecutor {
         addTask(new ToDo(line));
     }
 
-    /** Adds a deadline task from a complete command. */
+    /**
+     * Adds a deadline task from a complete command.
+     *
+     * @param line Complete deadline command containing a description and due time.
+     * @throws AthenaException If the command is incomplete or the task cannot be saved.
+     */
     public void addDeadline(String line) {
         String content = line.substring("deadline".length()).trim();
         if (content.isBlank()) {
@@ -122,7 +163,12 @@ public class TaskHandler implements CommandExecutor {
         addTask(new Deadline(description, by));
     }
 
-    /** Adds an event task from a complete command. */
+    /**
+     * Adds an event task from a complete command.
+     *
+     * @param line Complete event command containing a description, start time, and end time.
+     * @throws AthenaException If the command is incomplete or the task cannot be saved.
+     */
     public void addEvent(String line) {
         String content = line.substring("event".length()).trim();
         if (content.isBlank()) {
@@ -152,6 +198,13 @@ public class TaskHandler implements CommandExecutor {
     }
 
     /** Returns the task selected by a command containing a one-based task number. */
+    /**
+     * Returns the task selected by a command containing a one-based task number.
+     *
+     * @param line Complete command containing the task number.
+     * @return Selected task.
+     * @throws AthenaException If the task number is missing, invalid, or outside the task list.
+     */
     private Task getTask(String line) {
         String[] parts = line.trim().split("\\s+");
         if (parts.length != 2 || !parts[1].matches("\\d+")) {
@@ -170,6 +223,13 @@ public class TaskHandler implements CommandExecutor {
     }
 
     /** Returns the validated one-based task number from a delete command. */
+    /**
+     * Returns the validated one-based task number from a delete command.
+     *
+     * @param line Complete delete command containing the task number.
+     * @return Validated one-based task number.
+     * @throws AthenaException If the task number is missing, invalid, or outside the task list.
+     */
     private int getTaskNumberForDelete(String line) {
         String[] parts = line.split("\\s+");
         if (parts.length != 2 || !parts[1].matches("-?\\d+")) {
@@ -193,6 +253,14 @@ public class TaskHandler implements CommandExecutor {
     }
 
     /** Returns the position of a command marker that is surrounded by text boundaries. */
+    /**
+     * Returns the position of a command marker surrounded by text boundaries.
+     *
+     * @param text Text to search.
+     * @param marker Command marker to find.
+     * @param fromIndex Index at which to start searching.
+     * @return Marker position, or {@code -1} if no bounded marker is found.
+     */
     private static int findMarker(String text, String marker, int fromIndex) {
         int position = text.indexOf(marker, fromIndex);
         while (position >= 0) {
@@ -209,6 +277,12 @@ public class TaskHandler implements CommandExecutor {
     }
 
     /** Adds and saves a task, rolling back the addition if persistence fails. */
+    /**
+     * Adds and saves a task, rolling back the addition if saving fails.
+     *
+     * @param task Task to add.
+     * @throws AthenaException If the updated task list cannot be saved.
+     */
     private void addTask(Task task) {
         tasks.add(task);
         try {
@@ -223,11 +297,22 @@ public class TaskHandler implements CommandExecutor {
     }
 
     /** Saves the current task list to persistent storage. */
+    /**
+     * Saves the current task list to persistent storage.
+     *
+     * @throws AthenaException If the task list cannot be saved.
+     */
     private void saveTasks() {
         Storage.saveTasks(tasks);
     }
 
-    /** Adds the task described by a complete add command. */
+    /**
+     * Adds the task described by a complete add command.
+     *
+     * @param line Complete todo, deadline, or event command.
+     * @throws AthenaException If the command is incomplete or the task cannot be saved.
+     * @throws IllegalArgumentException If the command uses an unsupported task type.
+     */
     @Override
     public void add(String line) {
         String commandWord = line.split("\\s+", 2)[0];

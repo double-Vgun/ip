@@ -9,12 +9,20 @@ import command.ListCommand;
 import command.MarkCommand;
 import command.UnmarkCommand;
 
-/** Converts raw user input into executable commands. */
+/**
+ * Converts raw user input into executable commands.
+ */
 public final class Parser {
     private Parser() {
     }
 
-    /** Returns the command represented by the user's input. */
+    /**
+     * Returns the command represented by the user's input.
+     *
+     * @param input Raw command entered by the user.
+     * @return Command corresponding to the user's input.
+     * @throws ParserException If the input is blank or starts with an unsupported command word.
+     */
     public static Command parse(String input) {
         String fullCommand = input.trim();
         if (fullCommand.isEmpty()) {
